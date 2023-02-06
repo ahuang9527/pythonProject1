@@ -8,8 +8,7 @@ class ScrapytestSpider(scrapy.Spider):
     allowed_domains = ['c.biancheng.net']
     start_urls = ['http://c.biancheng.net/python_spider/scrapy-case.html']
 
-    #用于解析提取数据的response会直接被传入parse解析模块，只需要对response进行解析就行
-
+    #用于解析提取数据的response会直接被传入parse解析模块，只需要对response进行解析
     def parse(self, response):
         #需要注意的是，crapy中xpath分析的是scrapy的response的数据，返回的是解析器列表
         #xpath函数返回的为列表，列表中存放的数据为Selector类型数据。解析到的内容被封装在Selector对象中，需要调用extract()函数将解析的内容从Selector中取出。

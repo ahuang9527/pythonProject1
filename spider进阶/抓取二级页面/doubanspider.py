@@ -79,7 +79,7 @@ class DoubanSpider(object):
         # 调用etree模块的HTML()方法来创建html解析对象
         p = etree.HTML(html)
         h_list=p.xpath('//*[@id="content"]/div/div[2]/div[1]/div/span/a')
-        #print(h_list) a
+        #print(h_list)
         #h_list得到含有是所有要爬取内容列表的基准表达式
         #遍历该表达式并将名称url传入字典item中，方便后续调用
         item = {}
