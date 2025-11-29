@@ -1,11 +1,11 @@
-import re
-
 import execjs
+import re
 import requests
 
 
 #请求参数无误，但是会报错访问异常1022
 #百度翻译访问仍有异常，但是网上目前没有找到处理办法，先暂时搁置。等之后学习深入后解决该问题后，我写一篇针对该问题的博客
+#2023/2/8后续系统性学习之后发现，是post传递参数时有误，使用了params传递参数（get方法的传参），应当使用data传递表单（post提交表单），很基础的知识，:(
 class Baidufanyispider():
     # 初始化
     def __init__(self):
@@ -18,7 +18,7 @@ class Baidufanyispider():
         }
         # 将json格式的响应体进行反序列化为python字典
         #html = requests.post(url=self.url, headers={'user-agent': UserAgent().random}, params=params).json()
-        html = requests.post(url=self.url, headers=headers, params=params).json()
+        html = requests.post(url=self.url, headers=headers, data=params).json()
         print(html)
         #self.parse_html(html)
 
