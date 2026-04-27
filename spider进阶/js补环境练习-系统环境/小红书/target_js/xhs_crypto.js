@@ -1498,8 +1498,8 @@ var __$c = '56544b424251464d00283e0e1d08c04d3bd3c82a000000000002deaa1500003b01a5
 var glb = typeof window === 'undefined' ? global : window;
 glb['_AUuXfEG27Xa3x'](__$c, [, , typeof globalThis !== "undefined" ? globalThis : undefined, typeof undefined !== "undefined" ? undefined : undefined, typeof performance !== "undefined" ? performance : undefined, typeof encodeURIComponent !== "undefined" ? encodeURIComponent : undefined, typeof Array !== "undefined" ? Array : undefined, typeof TextEncoder !== "undefined" ? TextEncoder : undefined, typeof Date !== "undefined" ? Date : undefined, typeof Math !== "undefined" ? Math : undefined, typeof Uint8Array !== "undefined" ? Uint8Array : undefined, typeof document !== "undefined" ? document : undefined, typeof setTimeout !== "undefined" ? setTimeout : undefined, typeof RegExp !== "undefined" ? RegExp : undefined, typeof unescape !== "undefined" ? unescape : undefined, typeof parseInt !== "undefined" ? parseInt : undefined, typeof Object !== "undefined" ? Object : undefined, typeof navigator !== "undefined" ? navigator : undefined, typeof InstallTrigger !== "undefined" ? InstallTrigger : undefined, typeof Set !== "undefined" ? Set : undefined, typeof Function !== "undefined" ? Function : undefined, typeof String !== "undefined" ? String : undefined, typeof Error !== "undefined" ? Error : undefined, typeof chrome !== "undefined" ? chrome : undefined, typeof Event !== "undefined" ? Event : undefined, typeof top !== "undefined" ? top : undefined, typeof Reflect !== "undefined" ? Reflect : undefined])
 
-sign=window.mnsv2("/api/redcaptcha/v2/getconfig{}", "701d7db129f79737abc1c57cc97e69da", "040a1d360bddd5d9c6fe7097ff1437e0")
+//sign=window.mnsv2("/api/redcaptcha/v2/getconfig{}", "701d7db129f79737abc1c57cc97e69da", "040a1d360bddd5d9c6fe7097ff1437e0")
 
 
 
-console.log(sign)
+//console.log(sign)
