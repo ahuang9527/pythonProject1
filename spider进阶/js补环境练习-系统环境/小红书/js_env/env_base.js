@@ -90,6 +90,57 @@ function getDefaultValue(prop) {
 
 // 创建假的 WebAssembly 对象
 function createFakeWebAssembly() {
+    // 在 createFakeWebAssembly 函数内，替换原有的 Memory 部分
+    class FakeWebAssemblyMemory {
+        constructor(descriptor) {
+            console.log('[WASM] new Memory() 参数:', descriptor);
+            // 页大小固定为 64KB (65536 字节)
+            const initial = descriptor?.initial || 1;
+            const maximum = descriptor?.maximum || initial;
+            this._initial = initial;
+            this._maximum = maximum;
+            // 创建初始大小的 ArrayBuffer
+            this._buffer = new ArrayBuffer(initial * 65536);
+            // 添加 buffer 属性（不可枚举，但直接赋值）
+            this.buffer = this._buffer;
+        }
+
+        // grow 方法：增加指定页数，返回旧的页数
+        grow(pages) {
+            console.log('[WASM] Memory.grow() pages:', pages);
+            const oldSize = this._buffer.byteLength / 65536;
+            const newSize = oldSize + pages;
+            if (newSize > this._maximum) {
+                throw new Error('WebAssembly.Memory.grow: maximum size exceeded');
+            }
+            // 创建新的更大的 ArrayBuffer 并复制数据
+            const newBuffer = new ArrayBuffer(newSize * 65536);
+            const oldView = new Uint8Array(this._buffer);
+            const newView = new Uint8Array(newBuffer);
+            newView.set(oldView);
+            this._buffer = newBuffer;
+            this.buffer = this._buffer;
+            return oldSize;
+        }
+
+        // 小红书可能用到的 toFixedLengthBuffer（真实浏览器有这个方法）
+        toFixedLengthBuffer() {
+            console.log('[WASM] Memory.toFixedLengthBuffer()');
+            // 返回当前 buffer 的固定长度副本（实际实现未知，我们直接返回原buffer）
+            return this._buffer;
+        }
+
+        // toResizableBuffer 同理
+        toResizableBuffer() {
+            console.log('[WASM] Memory.toResizableBuffer()');
+            return this._buffer;
+        }
+    }
+
+    // 确保 WebAssembly.Memory 的原型上有这些方法
+    FakeWebAssemblyMemory.prototype.grow = FakeWebAssemblyMemory.prototype.grow;
+    FakeWebAssemblyMemory.prototype.toFixedLengthBuffer = FakeWebAssemblyMemory.prototype.toFixedLengthBuffer;
+    FakeWebAssemblyMemory.prototype.toResizableBuffer = FakeWebAssemblyMemory.prototype.toResizableBuffer;
     // 这个对象要模拟真实的 WebAssembly 接口
     const wasm = {
         // WebAssembly.Instance 构造函数
@@ -99,7 +150,7 @@ function createFakeWebAssembly() {
                 exports: imports?.env || {}
             };
         },
-
+        Memory:FakeWebAssemblyMemory,
         // WebAssembly.Module 构造函数
         Module: function Module(bytes) {
             console.log('[WASM] 创建 WebAssembly.Module');
@@ -193,6 +244,13 @@ const doc = {
     readyState: 'complete',
     documentElement: {},
     body: {},
+    addEventListener: function(type, listener, options) {
+        console.log(`[DOC] addEventListener 注册事件: ${type}`);
+        // 小红书只是检查该方法是否存在，不需要真正实现
+    },
+    removeEventListener: function(type, listener) {
+        console.log(`[DOC] removeEventListener 移除事件: ${type}`);
+    },
     createElement: (tag) => {
         console.log(`[DOC] createElement: ${tag}`);
         return {
@@ -261,6 +319,91 @@ window.console = console;
 
 // 确保 window.Object 存在
 window.Object = Object;
+
+
+// 模拟小红书 insight 监控对象
+window.insight = {
+    // 基础属性（从浏览器复制）
+    sessionId: '6bc91435-84a5-438c-be77-57d42981d426',
+    version: '1.3.12',
+    queue: [],
+    options: {
+        jsError: {},
+        http: {},
+        blankScreen: {},
+        debug: false,
+        beforeSend: function() {}
+    },
+    isReady: false,
+
+    // 关键方法（空实现或简单日志）
+    getBaseDeviceInfo: function() {
+        console.log('[INSIGHT] getBaseDeviceInfo 被调用');
+        return undefined;
+    },
+    report: function(e, a) {
+        console.log('[INSIGHT] report 被调用', e, a);
+        if (!this.isReady) {
+            this.queue.push(e);
+        }
+    },
+    push: function(e, a) {
+        console.log('[INSIGHT] push 被调用', e, a);
+        if (a === 'ApmJSONTracker') {
+            this.sendApm(e.value, e.type);
+        } else {
+            this.report(e);
+        }
+    },
+    config: function(e, a, s) {
+        console.log('[INSIGHT] config 被调用', e, a, s);
+    },
+    init: function(e) {
+        console.log('[INSIGHT] init 被调用', e);
+        this.isReady = true;
+    },
+    setKeyResource: function(e) {
+        console.log('[INSIGHT] setKeyResource 被调用', e);
+    },
+    extend: function(e, a) {
+        console.log('[INSIGHT] extend 被调用', e, a);
+    },
+    flush: function(e) {
+        console.log('[INSIGHT] flush 被调用', e);
+    },
+    destroy: function() {
+        console.log('[INSIGHT] destroy 被调用');
+    },
+    setCustomDimensions: function(e) {
+        console.log('[INSIGHT] setCustomDimensions 被调用', e);
+        if (typeof e === 'function') {
+            e({}).then(() => {});
+        }
+    },
+    updateMeta: function(e) {
+        console.log('[INSIGHT] updateMeta 被调用', e);
+    },
+    sendApm: function(e, a) {
+        console.log('[INSIGHT] sendApm 被调用', e, a);
+        var s = {};
+        s[a] = { type: a, value: e };
+        var u = { type: 'FrontApmTracker', value: s };
+        this.push(u);
+    },
+    sendCustomPoint: function(e) {
+        console.log('[INSIGHT] sendCustomPoint 被调用', e);
+        this.report(e);
+    },
+    // 原型上的其他方法（以防万一）
+    innerFlush: function() { console.log('[INSIGHT] innerFlush'); },
+    sendCustomError: function(e) { console.log('[INSIGHT] sendCustomError', e); },
+    checkBlankScreenError: function() { console.log('[INSIGHT] checkBlankScreenError'); },
+    reportBlocked: function() { console.log('[INSIGHT] reportBlocked'); },
+    run: function() { console.log('[INSIGHT] run'); },
+    initForQiankunSubApp: function() { console.log('[INSIGHT] initForQiankunSubApp'); }
+};
+
+window._66062487cf103622475a2f9b17d8293e = 'mns0201';
 
 console.log('\n✅ 基础环境加载完成');
 console.log(`📊 当前 window 上的属性数量: ${Object.keys(window).length}\n`);

@@ -22,6 +22,8 @@ const w = "040a1d360bddd5d9c6fe7097ff1437e0";
 
 console.log('=== 开始测试 window.mnsv2 ===\n');
 
+
+
 // 检查 mnsv2 函数
 console.log('1. 检查 window.mnsv2 类型:', typeof window.mnsv2);
 console.log('2. 检查 window.mnsv2 是否可调用:', typeof window.mnsv2 === 'function');
@@ -55,3 +57,5 @@ if (typeof window.mnsv2 === 'function') {
     const funcs = Object.keys(window).filter(k => typeof window[k] === 'function');
     console.log(funcs.slice(0, 30));  // 只显示前30个
 }
+
+
