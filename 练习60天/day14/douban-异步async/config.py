@@ -10,10 +10,13 @@ API_URL = 'https://movie.douban.com/j/chart/top_list'
 LIMIT = 50
 
 # 请求超时（秒）
-TIMEOUT = 15
+TIMEOUT = 150
 
 # 线程池大小，根据网络和反爬调整
 MAX_WORKERS = 5
+
+# 异步aiohttp同时请求的最大数量
+CONCURRENCY = 5
 
 # 随机延时范围（秒）
 MIN_DELAY = 2.0
